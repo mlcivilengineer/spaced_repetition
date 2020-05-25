@@ -25,11 +25,11 @@ def create_spaced_repetition_event(service, name, today_date, spaced_time=3, tim
       'timeZone': timeZone,
     },
     'reminders': {
-      'useDefault': True,
-      # 'overrides': [
-      #   {'method': 'email', 'minutes': 24 * 60},
-      #   {'method': 'popup', 'minutes': 10},
-      # ],
+      'useDefault': False,
+      'overrides': [
+        {'method': 'email', 'minutes': 1},
+        {'method': 'popup', 'minutes': 1},
+      ],
     },
   }
   event = service.events().insert(calendarId='primary', body=event).execute()

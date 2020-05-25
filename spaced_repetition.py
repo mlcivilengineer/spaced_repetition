@@ -25,11 +25,11 @@ def create_spaced_repetition_event(service, name, today_date, spaced_time=3, tim
       'timeZone': timeZone,
     },
     'reminders': {
-      'useDefault': False,
-      'overrides': [
-        {'method': 'email', 'minutes': 24 * 60},
-        {'method': 'popup', 'minutes': 10},
-      ],
+      'useDefault': True,
+      # 'overrides': [
+      #   {'method': 'email', 'minutes': 24 * 60},
+      #   {'method': 'popup', 'minutes': 10},
+      # ],
     },
   }
   event = service.events().insert(calendarId='primary', body=event).execute()
@@ -63,6 +63,7 @@ response = wait_and_get_element(
     '#notion-app > div > div.notion-cursor-listener > div.notion-frame > div.notion-scroller.vertical.horizontal > div.notion-page-content',
   driver=driver)
 
+print(response.text)
 
 
 if '@Today' in response.text:
@@ -70,5 +71,5 @@ if '@Today' in response.text:
   print(f'creating events for {title}')
   create_spaced_repetition_event(service, title, today_date, spaced_time=1)
   create_spaced_repetition_event(service, title, today_date, spaced_time=4)
-  create_spaced_repetition_event(service, title, today_date, spaced_time=10)
-  create_spaced_repetition_event(service, title, today_date, spaced_time=30)
+  create_spaced_repetition_event(service, title, today_date, spaced_time=11)
+  create_spaced_repetition_event(service, title, today_date, spaced_time=32)

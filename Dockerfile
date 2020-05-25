@@ -1,6 +1,8 @@
 FROM python:3.8-slim
 WORKDIR /app
 
+RUN rm -rf /etc/localtime && ln -s /usr/share/zoneinfo/Brazil/East /etc/localtime
+
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get -y --no-install-recommends install wget gnupg gnupg2 gnupg1
 RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'

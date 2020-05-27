@@ -1,39 +1,45 @@
 import datetime
 import pickle
-from selenium import webdriver
+
 # from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
+
 
 def wait_and_get_element(css_selector=None, time_to_wait=30, driver=None):
-  return WebDriverWait(driver, time_to_wait).until(ec.element_to_be_clickable((By.CSS_SELECTOR, css_selector)))
+    return WebDriverWait(driver, time_to_wait).until(ec.element_to_be_clickable((By.CSS_SELECTOR, css_selector)))
+
 
 def create_spaced_repetition_event(service, name, today_date, spaced_time=3, timeZone='America/Sao_Paulo'):
-  delta = datetime.timedelta(spaced_time)
-  event_date = str(today_date + delta)
-  event = {
-    'summary': name,
-    'start': {
-      'date': event_date,
-      'timeZone': timeZone,
-    },
-    'end': {
-      'date': event_date,
-      'timeZone': timeZone,
-    },
-    'reminders': {
-      'useDefault': False,
-      'overrides': [
-        {'method': 'email', 'minutes': 1},
-        {'method': 'popup', 'minutes': 1},
-      ],
-    },
-  }
-  event = service.events().insert(calendarId='primary', body=event).execute()
-  print('Event created: %s' % (event.get('htmlLink')))
+    delta = datetime.timedelta(spaced_time)
+    new_date = today_date + delta
+    start_date = str(datetime.datetime.combine(date=new_date, time=datetime.time(hour=19)).isoformat("T"))
+    end_date = str(datetime.datetime.combine(date=new_date, time=datetime.time(hour=20)).isoformat("T"))
+    event = {
+        'summary': name,
+        'start': {
+            'dateTime': start_date,
+            'timeZone': timeZone,
+        },
+        'end': {
+            'dateTime': end_date,
+            'timeZone': timeZone,
+        },
+        'reminders': {
+            'useDefault': False,
+            'overrides': [
+                {'method': 'email', 'minutes': 60},
+                {'method': 'popup', 'minutes': 60},
+            ],
+        },
+    }
+    event = service.events().insert(calendarId='primary', body=event).execute()
+    print('Event created: %s' % (event.get('htmlLink')))
+
 
 #
 # SCOPES = ['https://www.googleapis.com/auth/calendar']
@@ -61,15 +67,14 @@ driver.get(NOTION_URL)
 
 response = wait_and_get_element(
     '#notion-app > div > div.notion-cursor-listener > div.notion-frame > div.notion-scroller.vertical.horizontal > div.notion-page-content',
-  driver=driver)
+    driver=driver)
 
 print(response.text)
 
-
 if '@Today' in response.text:
-  title = f'Study Recap of {str(today_date)}'
-  print(f'creating events for {title}')
-  create_spaced_repetition_event(service, title, today_date, spaced_time=1)
-  create_spaced_repetition_event(service, title, today_date, spaced_time=4)
-  create_spaced_repetition_event(service, title, today_date, spaced_time=11)
-  create_spaced_repetition_event(service, title, today_date, spaced_time=32)
+    title = f'Study Recap of {str(today_date)}'
+    print(f'creating events for {title}')
+    create_spaced_repetition_event(service, title, today_date, spaced_time=1)
+    create_spaced_repetition_event(service, title, today_date, spaced_time=4)
+    create_spaced_repetition_event(service, title, today_date, spaced_time=11)
+    create_spaced_repetition_event(service, title, today_date, spaced_time=32)

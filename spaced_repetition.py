@@ -1,6 +1,7 @@
 import datetime
 import pickle
 
+import boto3
 # from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from selenium import webdriver
@@ -50,8 +51,8 @@ def create_spaced_repetition_event(service, name, today_date, spaced_time=3, tim
 #     pickle.dump(creds, token)
 
 def main(*args):
-    with open('credentials/token.pickle', 'rb') as token:
-        creds = pickle.load(token)
+    s3 = boto3.resource('s3')
+    creds = pickle.loads(s3.Bucket("credentials-ml-engineer").Object("token.pickle").get()['Body'].read())
     service = build('calendar', 'v3', credentials=creds)
 
     today_date = datetime.date.today()
